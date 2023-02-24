@@ -57,10 +57,18 @@
 						<hr>
 						<button class="accordion">Users</button>
 						<div id="username_filter" class="panel">
-
-
+							@foreach($users as $user)
+								<button id="{{$userID}}"  onclick="updateUserfilter(this.id)" class="btn btn-secondary" style="width: 100%">{{$userID}} </button>
+							@endforeach
 						</div>
 						<hr>
+						<form action="/filters" method="POST">\
+							@csrf
+							<input type="hidden" id="appname" value="">
+							<input type="hidden" id="username" value="">
+							<input type="hidden" id="search" value="">
+
+						</form>
 						<button id="filter"  onclick="filter()"  class="btn btn-primary" style="width: 100%">Search</button><br>
 					</div>
 				</div>
@@ -72,9 +80,22 @@
 				<div class="panel-body">
 					<div class="text-right"><input onchange="filter()" type="text"  id="searchText"></div>
 					<div class="log_area" id="log_area">
-
-						<h1 class="text-center">Welcome to TurboDial Log Viewer.</h1>
-						<p class="text-center">Start by searching for an AppName on the filter panel.</p>
+						@foreach($logs as $log)
+							<div class="mb-2">
+								<p><button  class="btn btn-xs btn-primary"  onclick="invoke(this.id)" id="{{$log->invoke_id}}">[{{sprintf('%05d', $log->invoke_id)}}]</button><strong> {{$log->event}} -{{$log->appName }} - {{$log->userName}}
+										@if($log->sid1 != "0") <button  class="btn btn-xs btn-warning"  onclick="sids(this.id)" id="{{$log->sid1}}">{{$log->sid1}}</button> @endif
+										@if($log->sid2 != "0") <button  class="btn btn-xs btn-success"  onclick="sids(this.id)" id="{{$log->sid2}}">{{$log->sid2}}</button>@endif</strong></p>
+								<div class="flex">
+									<div class="font-semibold w-1/4 px-2 pt-1 rounded log-{{strtolower(\Monolog\Logger::getLevelName($log->level))}}"><p class="text-sm"><i class="fa fa-exclamation-triangle"></i>{{\Monolog\Logger::getLevelName($log->level)}}</p></div>
+									<div class="w-3/4 px-2">
+										<p style="white-space: pre-wrap"> {{$log->message}}</p>
+									</div>
+								</div>
+								<p class="text-xs"> {{date('Y/m/d h:i:s a', $log->time)}}   -  {{config('app.timezone')}}  </p>
+								<hr>
+							</div>
+						@endforeach
+						{!! $logs->render() !!}
 					</div>
 				</div>
 			</div>

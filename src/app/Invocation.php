@@ -6,7 +6,6 @@ class Invocation extends Model {
 
 	//
     protected $table = 'invoke';
-    public $timestamps = false;
 
     public function logs()
     {

@@ -6,7 +6,6 @@ class Log extends Model {
 
 	//
     protected $table = 'log';
-    public $timestamps = false;
 
     public function invoker()
     {

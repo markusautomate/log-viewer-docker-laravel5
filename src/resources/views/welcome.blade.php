@@ -38,17 +38,15 @@
 		</style>
 	</head>
 	<body>
-		<div id="app" class="container">
+		<div class="container">
 			<div class="content">
 				<div class="title">
 					<a href="/home">
 						<img src="https://turbodial.biz/wp-content/uploads/2015/01/newTurboDial-Logo-300x64.png" alt="" />
 					</a>
-					<logs></logs>
 				</div>
 				<div class="quote">TurboDial Log Viewer</div>
 			</div>
 		</div>
-		<script src="{{ asset('js/app.js') }}"></script>
 	</body>
 </html>

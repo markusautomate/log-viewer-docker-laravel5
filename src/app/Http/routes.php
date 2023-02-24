@@ -18,8 +18,6 @@ Route::get('log-date/{date}', 'HomeController@logdate');
 Route::get('filter_logs/{log_date}/{appId}/{user}/{level}/{search}', 'HomeController@filters');
 Route::post('filter', 'HomeController@filters');
 Route::post('sids', 'HomeController@sids');
-Route::post('users', 'HomeController@getUsers');
-Route::post('graphdata', 'HomeController@graphData');
 Route::post('invoke', 'HomeController@invoke');
 Route::get('invokelist', 'DashboardController@invoke_list');
 Route::get('loglist', 'DashboardController@log_list');

@@ -27,7 +27,6 @@ class Kernel extends HttpKernel {
 		'auth' => 'App\Http\Middleware\Authenticate',
 		'auth.basic' => 'Illuminate\Auth\Middleware\AuthenticateWithBasicAuth',
 		'guest' => 'App\Http\Middleware\RedirectIfAuthenticated',
-        'ajax-session-expired' => '\App\Http\Middleware\AjaxSessionExpiredMiddleware',
 	];
 
 }

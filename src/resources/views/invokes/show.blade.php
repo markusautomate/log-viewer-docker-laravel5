@@ -1,37 +1,32 @@
-<html>
-<head>
-    <title>TurboDial Log Viewer</title>
+@extends('app')
 
-    <link href='//fonts.googleapis.com/css?family=Lato:100' rel='stylesheet' type='text/css'>
-    <link href="{{ asset('/css/app.css?ver=2') }}" rel="stylesheet">
-    <link href='//fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
-</head>
-<body>
-<div id="app" class="container">
-    <div class="content">
+@section('content')
+    <div id="loading"></div>
+    <div class="container">
         <div class="row">
             <table class="table">
                 <thead>
                 <tr>
+                    <th scope="col">#</th>
                     <th scope="col">Event</th>
-                    <th scope="col">Count</th>
+                    <th scope="col">AppName</th>
+                    <th scope="col">User</th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach($invokes as $invoke)
-                    <tr>
-                        <td>{{$invoke->event}}</td>
-                        <td>{{$invoke->total}}</td>
-                    </tr>
+                <tr>
+                    <th scope="row">{{$invoke->id}}</th>
+                    <td>{{$invoke->event}}</td>
+                    <td>{{$invoke->appName}}</td>
+                    <td>{{$invoke->userName}}</td>
+                    <td>{{ date('m/d/Y g:i:s A',$invoke->timestamp)}}</td>
+                </tr>
                 @endforeach
                 </tbody>
             </table>
-{{--            {!! $invokes->render() !!}--}}
+            {!! $invokes->render() !!}
         </div>
     </div>
-</div>
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
-</body>
-</html>
 
+@endsection

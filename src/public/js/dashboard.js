@@ -1,20 +1,9 @@
-$( document ).ajaxError(function( event, jqxhr, settings, thrownError ) {
-    alert("Session expired. You'll be take to the login page");
-    location.href = "/auth/login";
-});
-
 function  changeDate()
 {
-
-        var dateNow = document.getElementById('dateCal').value;
-        var date = new Date(dateNow);
-        console.log(typeof date);
-        if (date instanceof Date && !isNaN(date))
-        {
-            var url = '/log-date/'+dateNow;
-            window.location = url;
-        }
-
+    var dateNow = document.getElementById('dateCal').value;
+    console.debug(dateNow);
+    var url = '/log-date/'+dateNow;
+     window.location = url;
 }
 function updateAppIDfilter(id)
 {
@@ -23,7 +12,7 @@ function updateAppIDfilter(id)
         alert("First, please choose the date. Thank you!");
         return;
     }
-    unsetGlobal()
+
     document.getElementById('searchAppID').value='';
     console.debug("search for " + id);
     var activeUserFilter = document.getElementById("activeUserFilter");
@@ -50,7 +39,6 @@ function updateAppIDfilter(id)
 
     if (id==='reset_appname')
     {
-        clearSearch();
         button.classList.remove("btn-secondary");
         button.classList.add("btn-primary");
         activeAppIdFilter.innerText = '';
@@ -60,8 +48,6 @@ function updateAppIDfilter(id)
         activeUserFilter.innerText = '';
         activeUserFilter.value = 0;
         activeUserFilter.style.display = "none";
-        document.getElementById('username_filter').innerHTML = "";
-        hideSearchButton()
     }
     else if((button!=null) && (button.innerText=== activeAppIdFilter.innerText))
     {
@@ -74,8 +60,6 @@ function updateAppIDfilter(id)
         activeUserFilter.innerText = '';
         activeUserFilter.value = 0;
         activeUserFilter.style.display = "none";
-        document.getElementById('username_filter').innerHTML = "";
-        hideSearchButton()
     }
     else
     {
@@ -85,89 +69,8 @@ function updateAppIDfilter(id)
         activeUserFilter.value = 0;
         activeUserFilter.style.display = "none";
         activeAppIdFilter.style.display = "block";
-        getUsers();
-        searchButton()
     }
 
-}
-
-function graphData(appid, date_log)
-{
-    var data = {"date_log":date_log,
-        "appName":appid
-    }
-
-    $.ajax({
-        type : 'POST',
-        url : '/graphdata',
-        data: data,
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        dataType : 'json',
-        success : function (result) {
-
-            graphdata = result['graphData'];
-            document.getElementById('invokeCount').innerText = result['invokeCount'];
-            document.getElementById('invokeRate').innerText = result['invokeRate'];
-
-            addData(myChart,graphdata);
-
-        }
-    });
-}
-
-function getUsers()
-{
-    document.getElementById('loadingMessage').innerText = "Getting App Information...";
-    showLoading();
-    console.log("getusers");
-    document.getElementById('username_filter').innerHTML = "";
-    var date_log = document.getElementById('dateCal').value;
-    var appid = document.getElementById("activeAppIdFilter").value;
-
-    var data = {"date_log":date_log,
-        "appName":appid
-    }
-
-
-
-    $.ajax({
-        type : 'POST',
-        url : '/users',
-        data: data,
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        dataType : 'json',
-        success : function (result) {
-
-            users = Object.values(result['users'])
-            appnames = Object.values(result['appnames'])
-
-
-            users.forEach((name, key) => {
-                if (name!="" && name!="NoUserID" && name!="InfUserID: %") {
-                    document.getElementById('username_filter').innerHTML += "<button id=\"" + name + "\"  onclick=\"updateUserfilter(this.id)\" class=\"btn btn-primary\" style=\"width: 100%\">" + name + "</button>"
-                }
-            });
-            document.getElementById('appname_filter').innerHTML = "";
-            appnames.forEach((name, key) => {
-                    if (appnames.indexOf(name)==0)
-                    {
-                        document.getElementById('appname_filter').innerHTML += "<button id=\""+name+"\"  onclick=\"updateAppIDfilter(this.id)\"  class=\"btn btn-secondary\" style=\"width: 100%\">"+name+"</button><br>"
-                    }
-                    else
-                    {
-                        document.getElementById('appname_filter').innerHTML += "<button id=\""+name+"\"  onclick=\"updateAppIDfilter(this.id)\"  class=\"btn btn-primary\" style=\"width: 100%\">"+name+"</button><br>"
-                    }
-            });
-
-            hideLoading();
-        }
-    });
-
-    graphData(appid,date_log);
 }
 
 function updateUserfilter(id)
@@ -177,7 +80,6 @@ function updateUserfilter(id)
         alert("First, please choose the date. Thank you!");
         return;
     }
-    unsetGlobal();
     var activeUserFilter = document.getElementById("activeUserFilter");
     var button = document.getElementById(id);
     var elems = document.getElementById("username_filter").querySelectorAll("button");
@@ -204,7 +106,7 @@ function updateUserfilter(id)
         activeUserFilter.value = button.innerText;
         activeUserFilter.style.display = "block";
     }
-    searchButton()
+
 }
 
 function updateLevelfilter(id)
@@ -267,76 +169,31 @@ function updateLevelfilter(id)
     else
     {
         console.debug("filters regular")
-    }
-    searchButton()
-}
-
-function searchButton()
-{
-    let global = document.getElementById('globalToggle').checked;
-
-    if (global)
-    {
-        document.getElementById('globalSearch').style.display='inline';
-        document.getElementById('filter').style.display='none';
-    }
-    else
-    {
-        document.getElementById('filter').style.display='block';
-        document.getElementById('globalSearch').style.display='none';
+        filter();
     }
 
 }
 
-function hideSearchButton()
-{
-    document.getElementById('filter').style.display='none';
-    document.getElementById('globalSearch').style.display='none';
-}
 
 
-function filter(load = 0){
 
-    let global = document.getElementById('globalToggle').checked;
-    let date_log = document.getElementById('dateCal').value;
-    let appid = document.getElementById("activeAppIdFilter").value;
-    let contentSearch = document.getElementById('searchContent').value.trim();
-    if (contentSearch == "") contentSearch="unknown";
-    if (!global)
-    {
-        global = 0;
-        if (appid==undefined || appid==0 || appid=="")
-        {
-            alert("First, please select an AppId first. Thank you!");
-            hideLoading();
-            return;
-        }
-    }
-    else
-    {
-        if (contentSearch == "unknown"){
-            alert('Please enter a search text. Search for "all" if you want to see all the logs for today.');
-            document.getElementById('searchContent').value= "all";
-            document.getElementById('searchContent').focus();
-            return;
-        }
-        global = 1;
-    }
-
-    document.getElementById('loadingMessage').innerText = "Retrieving Logs...";
+function filter(){
     showLoading();
+    var date_log = document.getElementById('dateCal').value;
+    var appid = document.getElementById("activeAppIdFilter").value;
+    console.debug("appid is " + appid);
+    var user = document.getElementById("activeUserFilter").value;
+    console.debug("user is " + user);
+    var level =[];
+    console.debug("level is " + level);
+    var search = document.getElementById('searchText').value.trim();
+    if (search == "") search="unknown"
 
-    let user = document.getElementById("activeUserFilter").value;
-    let level =[];
-    let search = document.getElementById('searchText').value.trim();
-    if (search == "") search="unknown";
+    if (appid==undefined) appid=0
 
-
-    let sort = document.getElementById("sort").value;
-
-    let elems = document.getElementById("level_filter").querySelectorAll("button");
+    var elems = document.getElementById("level_filter").querySelectorAll("button");
     [].forEach.call(elems, function(el) {
-        if( el.classList.contains("btn-secondary"))
+        if( el.classList.contains("btn-primary"))
         {
             level.push(el.id)
         }
@@ -347,12 +204,7 @@ function filter(load = 0){
         "user":user,
         "level":JSON.stringify(level),
         "search":search,
-        "global":global,
-        "contentSearch":contentSearch,
-        "load":load,
-        "sort":sort}
-
-    localStorage['loadPage'] = load;
+        "load":0}
 
     $.ajax({
         type : 'POST',
@@ -363,117 +215,73 @@ function filter(load = 0){
         },
         dataType : 'json',
         success : function (result) {
-
-            document.getElementById("log_area").innerHTML = "";
-            // document.getElementById('username_filter').innerHTML = result[0];
-            // document.getElementById('appname_filter').innerHTML = result[2];
-            console.log(result['logs'].total);
-
-            if( result['logs'].total==0)
-            {
-                document.getElementById('logCount').innerText= '0';
-                document.getElementById("log_area").innerHTML = "<h1 class='text-center'>No data available.</h1>\n" +
-                    "                    <p class='text-center'>Please try another filter.</p>";
-            }
-            else
-            {
-                document.getElementById('logCount').innerText= result['logs'].total;
-                result['logs'].data.forEach(renderLogs);
-                document.getElementById("log_area").innerHTML += result['pagination'];
-            }
-
-             hideLoading();
+            document.getElementById("log_area").innerHTML = result[1];
+            document.getElementById('username_filter').innerHTML = result[0];
+            document.getElementById('appname_filter').innerHTML = result[2];
+            hideLoading();
 
         }
     });
-    document.getElementById('globalSearch').style.display='none';
-    hideSearchButton()
 }
 
-function getLoglevel(level)
-{
-    switch (level){
-        case 100:
-            return "DEBUG";
-            break;
-        case 200:
-            return "INFO";
-            break;
-        case 250:
-            return "NOTICE";
-            break;
-        case 300:
-            return "WARNING";
-            break;
-        case 400:
-            return "ERROR";
-            break;
-        case 500:
-            return "CRITICAL";
-            break;
-        case 550:
-            return "ALERT";
-            break;
-        case 600:
-            return "EMERGENCY";
-            break;
-    }
-}
-
-function unsetGlobal()
-{
-    document.getElementById('globalToggle').checked = false;
-    document.getElementById('searchContent').value = "";
-}
-
-function renderLogs(arr)
-{
-        var date = new Date(arr['time']* 1000)
-
-        text =  "<div class=\"mb-2\">\n" +
-        "<p><button  class=\"btn btn-xs btn-primary\"  onclick=\"invoke(this.id)\" id=\""+arr['invoke_id']+"\">["+arr['invoke_id']+"]</button><strong> "+arr['event']+" -"+arr['appName']+" - "+arr['userName']+"\n"
-        if (arr['sid1']!=0)
-        {
-            text += "- <button class=\"btn btn-xs btn-warning\" onClick=\"sids(this.id)\"\n" +
-            "                    id=\""+arr['sid1']+"\">"+arr['sid1']+"</button>"
-        }
-        if (arr['sid2']!=0)
-        {
-            text += "- <button class=\"btn btn-xs btn-success\" onClick=\"sids(this.id)\"\n" +
-                "                    id=\""+arr['sid2']+"\">"+arr['sid2']+"</button>"
-        }
-        text += "<div class=\"flex\">\n" +
-        "<div class=\"font-semibold w-1/4 px-2 pt-1 rounded log-"+ getLoglevel(arr['level']).toLowerCase() +"\"><p class=\"text-sm\"><i class=\"fa fa-exclamation-triangle\"></i>"+getLoglevel(arr['level']) +"</p></div>\n" +
-        "<div class=\"w-3/4 px-2\">\n" +
-        "<p style=\"white-space: pre-wrap\"> "+arr['message']+"</p>\n" +
-        "</div>\n" +
-        "</div>"+
-            "<p class='text-xs'>"+date.toLocaleString('en-US', { timeZone: 'America/New_York' })+" − 5:00 </p>\n" +
-            "<hr>"
-
-    document.getElementById("log_area").innerHTML += text;
-    return console.log(arr['appName']);
-}
-
-
-function sids(sids)
-{
+function loadMore(id){
+    var myobj = document.getElementById(id);
+    myobj.remove();
     showLoading();
     var date_log = document.getElementById('dateCal').value;
+    var appid = document.getElementById("activeAppIdFilter").value;
+    var user = document.getElementById("activeUserFilter").value;
     var level =[];
+        var search = document.getElementById('searchText').value.trim();
+    if (search == "") search="unknown"
+
+    if (appid==undefined) appid=0
+
     var elems = document.getElementById("level_filter").querySelectorAll("button");
     [].forEach.call(elems, function(el) {
-        if( el.classList.contains("btn-secondary"))
+        if( el.classList.contains("btn-primary"))
         {
             level.push(el.id)
         }
     });
 
-    var data = { "level":JSON.stringify(level),
-                "sids":sids,
-                "date_log":date_log}
+    var load = id.split("|")[1]
+    console.log(load)
+    var data = {"date_log":date_log,
+        "appid":appid,
+        "user":user,
+        "level":JSON.stringify(level),
+        "search":search,
+        "load":load}
 
-    var loadPage = localStorage['loadPage']
+    $.ajax({
+        type : 'POST',
+        url : '/filter',
+        data: data,
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        dataType : 'json',
+        success : function (result) {
+            document.getElementById("log_area").innerHTML += result[1];
+            hideLoading();
+        }
+    });
+}
+
+function sids(sids)
+{
+    showLoading();
+    var level =[];
+    var elems = document.getElementById("level_filter").querySelectorAll("button");
+    [].forEach.call(elems, function(el) {
+        if( el.classList.contains("btn-primary"))
+        {
+            level.push(el.id)
+        }
+    });
+
+    var data = { "level":JSON.stringify(level), "sids":sids }
 
     $.ajax({
         type : 'POST',
@@ -484,19 +292,9 @@ function sids(sids)
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         success : function (result) {
-            document.getElementById("log_area").innerHTML = "<h4><button onclick='filter("+loadPage+")'  class='btn btn-primary'><i class='glyphicon glyphicon-arrow-left'></i></button>Showing logs for SIDS:<span id='sids_filter' value='" +sids+ "'>"+sids+"</span>></h4>";
-
-            if(result['logs'].total==0)
-            {
-                document.getElementById("log_area").innerHTML = "<h1 class='text-center'>No data available.</h1>\n" +
-                    "                    <p class='text-center'>Please try another filter.</p>";
-            }
-            else
-            {
-                result['logs'].data.forEach(renderLogs);
-            }
+            document.getElementById("log_area").innerHTML = result[0];
             hideLoading();
-        }
+                    }
     });
 
 }
@@ -504,19 +302,16 @@ function sids(sids)
 function invoke(id)
 {
     showLoading();
-    var date_log = document.getElementById('dateCal').value;
     var level =[];
     var elems = document.getElementById("level_filter").querySelectorAll("button");
     [].forEach.call(elems, function(el) {
-        if( el.classList.contains("btn-secondary"))
+        if( el.classList.contains("btn-primary"))
         {
             level.push(el.id)
         }
     });
 
-    var data = { "level":JSON.stringify(level), "invoke_id":id,"date_log":date_log }
-
-    var loadPage = localStorage['loadPage']
+    var data = { "level":JSON.stringify(level), "invoke_id":id }
 
     $.ajax({
         type : 'POST',
@@ -527,17 +322,7 @@ function invoke(id)
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         success : function (result) {
-            document.getElementById("log_area").innerHTML = "<h4><button onclick='filter("+loadPage+")'  class='btn btn-primary'><i class='glyphicon glyphicon-arrow-left'></i></button>Showing logs with Invoke ID:<span id='invoke_id_filter' value='"+id+"'>"+id+"</span></h4>";
-
-            if(result['logs'].length==0)
-            {
-                document.getElementById("log_area").innerHTML = "<h1 class='text-center'>No data available.</h1>\n" +
-                    "                    <p class='text-center'>Please try another filter.</p>";
-            }
-            else
-            {
-                result['logs'].forEach(renderLogs);
-            }
+            document.getElementById("log_area").innerHTML = result[0];
             hideLoading();
         }
     });
@@ -578,14 +363,46 @@ window.onload = (event) => {
         document.getElementById('dateCal').valueAsDate = new Date();
     }
 
-    graphData("all",document.getElementById('dateCal').value)
-     // loadChart();
+    loadChart();
 };
 
+function loadChart()
+{
+    console.debug("loads chart");
+    var ctx = document.getElementById('myChart');
 
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: label,
+            datasets: [{
+                label: 'Invocations',
+                data: graphdata,
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
 
-
-
+    });
+}
 
 function updateAppIDchoices()
 {
@@ -599,10 +416,7 @@ function updateAppIDchoices()
         updateAppIDfilter(searchApp);
     }
 
-
-
 }
-
 
 function showLoading() {
 
@@ -613,14 +427,7 @@ function hideLoading() {
     document.querySelector('#loading').style.display = 'none';
 }
 
-$(document).ready(function (){
-    $(document).on('click','.pagination a',function(event){
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        var page = $(this).attr('href').split('page=')[1];
-        filter(page);
-    })
-})
+
 
 // if (document.addEventListener) {
 //     document.addEventListener('contextmenu', function(e) {
@@ -634,61 +441,3 @@ $(document).ready(function (){
 //         window.event.returnValue = false;
 //     });
 // }
-
-function clearSearch()
-{
-    console.log("clearing search input.")
-    var text = document.getElementById('searchText');
-    document.getElementById("cancelEvent").style.display = "none";
-    text.value="";
-
-}
-
-function changeSearch()
-{
-    var eventFilter = document.getElementById("cancelEvent");
-    var search = document.getElementById("searchText");
-
-    if (search.value!="")
-    {
-        eventFilter.innerText = search.value;
-        eventFilter.style.display = "block";
-        searchButton()
-    }
-    else
-    {
-        eventFilter.innerText= "";
-        eventFilter.style.display = "none";
-    }
-}
-
-
-
-function searchContentChange()
-{
-    var header = document.getElementById("log-heading");
-    var search = document.getElementById("searchContent");
-
-    var global = document.getElementById('globalToggle').checked;
-
-
-    if (search.value!="")
-    {
-        if (global)
-        {
-            document.getElementById('globalSearch').style.display='inline';
-            document.getElementById('filter').style.display='none';
-        }
-        else
-        {
-            document.getElementById('globalSearch').style.display='none';
-            document.getElementById('filter').style.display='block';
-        }
-        header.innerText = "Logs Content Search: " + search.value;
-
-    }
-    else
-    {
-        header.innerText = "Logs";
-    }
-}

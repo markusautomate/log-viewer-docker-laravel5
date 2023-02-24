@@ -8,7 +8,6 @@
 	<title>TurboDial Log Viewer</title>
 
 	<link href="{{ asset('/css/app.css?ver=2') }}" rel="stylesheet">
-	<link href="{{ asset('/css/switch.css?ver=1') }}" rel="stylesheet">
 
 	<!-- Fonts -->
 	<link href='//fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
@@ -63,6 +62,6 @@
 	<!-- Scripts -->
 	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="{{ asset('js/dashboard.js?ver=13') }}"></script>
+	<script type="text/javascript" src="{{ asset('js/dashboard.js?ver=6') }}"></script>
 </body>
 </html>
