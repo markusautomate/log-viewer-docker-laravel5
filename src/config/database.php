@@ -112,13 +112,14 @@ return [
 
 	'redis' => [
 
-		'cluster' => false,
+        'client' => 'predis',
 
-		'default' => [
-			'host'     => '127.0.0.1',
-			'port'     => 6379,
-			'database' => 0,
-		],
+        'default' => [
+            'host' => env('REDIS_HOST', 'redis_laravel'),
+            'password' => env('REDIS_PASSWORD', null),
+            'port' => env('REDIS_PORT', 6379),
+            'database' => 0,
+        ],
 
 	],
 

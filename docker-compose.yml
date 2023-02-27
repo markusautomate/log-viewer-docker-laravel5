@@ -4,6 +4,17 @@ networks:
   laravel:
 
 services:
+  redis:
+    image: 'bitnami/redis:latest'
+    container_name: redis_laravel
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - laravel
+    ports:
+      - "6380:6379"
   nginx:
     image: nginx:stable-alpine
     container_name: nginx_laravel
