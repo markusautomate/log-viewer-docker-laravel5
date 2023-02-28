@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c008a2e1af74135a24a55e0b6261ab6f",
+    "content-hash": "79c941c71accdb1488610a1dc8e8ae5d",
     "packages": [
         {
             "name": "classpreloader/classpreloader",
@@ -270,6 +270,108 @@
                 "string"
             ],
             "time": "2014-12-20T21:24:13+00:00"
+        },
+        {
+            "name": "ethanhann/redis-raw",
+            "version": "0.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ethanhann/redis-raw-php.git",
+                "reference": "f4186c6ed5c9d2a37da70508c2780970865fcf2d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ethanhann/redis-raw-php/zipball/f4186c6ed5c9d2a37da70508c2780970865fcf2d",
+                "reference": "f4186c6ed5c9d2a37da70508c2780970865fcf2d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7",
+                "psr/log": "^1.0"
+            },
+            "require-dev": {
+                "cheprasov/php-redis-client": "^1.8",
+                "consolidation/robo": "^1.0",
+                "friendsofphp/php-cs-fixer": "^2.2",
+                "mockery/mockery": "^0.9.9",
+                "monolog/monolog": "^1.23",
+                "phpunit/phpunit": "^6.0",
+                "predis/predis": "^1.1",
+                "ukko/phpredis-phpdoc": "^2.2@dev"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Ehann\\RedisRaw\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ethan Hann",
+                    "email": "ethanhann@gmail.com"
+                }
+            ],
+            "description": "Redis/PHP connectors.",
+            "support": {
+                "issues": "https://github.com/ethanhann/redis-raw-php/issues",
+                "source": "https://github.com/ethanhann/redis-raw-php/tree/0.3.2"
+            },
+            "time": "2022-06-04T21:11:47+00:00"
+        },
+        {
+            "name": "ethanhann/redisearch-php",
+            "version": "1.9.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ethanhann/redisearch-php.git",
+                "reference": "01490a47ba09e2883f07f87ee4cc00a09886e8d4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ethanhann/redisearch-php/zipball/01490a47ba09e2883f07f87ee4cc00a09886e8d4",
+                "reference": "01490a47ba09e2883f07f87ee4cc00a09886e8d4",
+                "shasum": ""
+            },
+            "require": {
+                "ethanhann/redis-raw": "^0.3",
+                "php": ">=7",
+                "psr/log": "^1.0"
+            },
+            "require-dev": {
+                "cheprasov/php-redis-client": "^1.8",
+                "consolidation/robo": "^1.0",
+                "friendsofphp/php-cs-fixer": "^2.2",
+                "mockery/mockery": "^0.9.9",
+                "monolog/monolog": "^1.23",
+                "phpunit/phpunit": "^6.0",
+                "predis/predis": "^1.1",
+                "ukko/phpredis-phpdoc": "^5.0@beta"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Ehann\\RediSearch\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ethan Hann",
+                    "email": "ethanhann@gmail.com"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/ethanhann/redisearch-php/issues",
+                "source": "https://github.com/ethanhann/redisearch-php/tree/1.9.0"
+            },
+            "time": "2019-11-02T10:21:18+00:00"
         },
         {
             "name": "ircmaxell/password-compat",
