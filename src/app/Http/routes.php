@@ -23,6 +23,8 @@ Route::get('invokelist', 'DashboardController@invoke_list');
 Route::get('loglist', 'DashboardController@log_list');
 Route::get('logdelete', 'DashboardController@log_delete');
 
+Route::get('redis', 'RedisController@index');
+
 Route::controllers([
 	'auth' => 'Auth\AuthController',
 	'password' => 'Auth\PasswordController',

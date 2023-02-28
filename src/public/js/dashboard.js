@@ -15,7 +15,7 @@ function updateAppIDfilter(id)
 
     document.getElementById('searchAppID').value='';
     console.debug("search for " + id);
-    var activeUserFilter = document.getElementById("activeUserFilter");
+    var activeEventFilter = document.getElementById("activeEventFilter");
     var activeAppIdFilter = document.getElementById("activeAppIdFilter");
     var button = document.getElementById(id);
     var elems = document.getElementById("appname_filter").querySelectorAll("button");
@@ -45,9 +45,9 @@ function updateAppIDfilter(id)
         activeAppIdFilter.style.display = "none";
         activeAppIdFilter.value = 0;
         document.getElementById('searchAppID').value = '';
-        activeUserFilter.innerText = '';
-        activeUserFilter.value = 0;
-        activeUserFilter.style.display = "none";
+        activeEventFilter.innerText = '';
+        activeEventFilter.value = 0;
+        activeEventFilter.style.display = "none";
     }
     else if((button!=null) && (button.innerText=== activeAppIdFilter.innerText))
     {
@@ -57,17 +57,17 @@ function updateAppIDfilter(id)
         activeAppIdFilter.style.display = "none";
         activeAppIdFilter.value = 0;
         document.getElementById('searchAppID').value = '';
-        activeUserFilter.innerText = '';
-        activeUserFilter.value = 0;
-        activeUserFilter.style.display = "none";
+        activeEventFilter.innerText = '';
+        activeEventFilter.value = 0;
+        activeEventFilter.style.display = "none";
     }
     else
     {
         activeAppIdFilter.innerText = id;
         activeAppIdFilter.value = id;
-        activeUserFilter.innerText = '';
-        activeUserFilter.value = 0;
-        activeUserFilter.style.display = "none";
+        activeEventFilter.innerText = '';
+        activeEventFilter.value = 0;
+        activeEventFilter.style.display = "none";
         activeAppIdFilter.style.display = "block";
     }
 
@@ -80,7 +80,7 @@ function updateUserfilter(id)
         alert("First, please choose the date. Thank you!");
         return;
     }
-    var activeUserFilter = document.getElementById("activeUserFilter");
+    var activeEventFilter = document.getElementById("activeEventFilter");
     var button = document.getElementById(id);
     var elems = document.getElementById("username_filter").querySelectorAll("button");
     [].forEach.call(elems, function(el) {
@@ -92,19 +92,19 @@ function updateUserfilter(id)
     button.classList.add("btn-secondary");
     button.classList.remove("btn-primary");
 
-    if (button.innerText=== activeUserFilter.innerText)
+    if (button.innerText=== activeEventFilter.innerText)
     {
         button.classList.remove("btn-secondary");
         button.classList.add("btn-primary");
-        activeUserFilter.innerText = '';
-        activeUserFilter.value = 0;
-        activeUserFilter.style.display = "none";
+        activeEventFilter.innerText = '';
+        activeEventFilter.value = 0;
+        activeEventFilter.style.display = "none";
     }
     else
     {
-        activeUserFilter.innerText = button.innerText;
-        activeUserFilter.value = button.innerText;
-        activeUserFilter.style.display = "block";
+        activeEventFilter.innerText = button.innerText;
+        activeEventFilter.value = button.innerText;
+        activeEventFilter.style.display = "block";
     }
 
 }
@@ -119,14 +119,7 @@ function updateLevelfilter(id)
 
     var activeLevelFilter = document.getElementById("activeLevelFilter");
     var button = document.getElementById(id);
-    // var elems = document.getElementById("level_filter").querySelectorAll("button");
-    // [].forEach.call(elems, function(el) {
-    //     el.classList.remove("btn-primary");
-    //     el.classList.remove("btn-secondary");
-    //     el.classList.add("btn-primary");
-    // });
-    // button.classList.add("btn-secondary");
-    // button.classList.remove("btn-primary");
+
 
     if (id==='lvlReset')
     {
@@ -141,9 +134,6 @@ function updateLevelfilter(id)
     {
         button.classList.remove("btn-secondary");
         button.classList.add("btn-primary");
-        // activeLevelFilter.innerText = '';
-        // activeLevelFilter.value = 0;
-        // activeLevelFilter.style.display = "none";
     }
     else if((button!=null) && button.classList.contains("btn-primary"))
     {
@@ -182,8 +172,8 @@ function filter(){
     var date_log = document.getElementById('dateCal').value;
     var appid = document.getElementById("activeAppIdFilter").value;
     console.debug("appid is " + appid);
-    var user = document.getElementById("activeUserFilter").value;
-    console.debug("user is " + user);
+    var event = document.getElementById("activeEventFilter").value;
+    console.debug("user is " + event);
     var level =[];
     console.debug("level is " + level);
     var search = document.getElementById('searchText').value.trim();
@@ -201,7 +191,7 @@ function filter(){
 
     var data = {"date_log":date_log,
         "appid":appid,
-        "user":user,
+        "event":event,
         "level":JSON.stringify(level),
         "search":search,
         "load":0}
@@ -215,9 +205,9 @@ function filter(){
         },
         dataType : 'json',
         success : function (result) {
-            document.getElementById("log_area").innerHTML = result[1];
-            document.getElementById('username_filter').innerHTML = result[0];
-            document.getElementById('appname_filter').innerHTML = result[2];
+            document.getElementById("log_area").innerHTML = result[0];
+            // document.getElementById('username_filter').innerHTML = result[0];
+            // document.getElementById('appname_filter').innerHTML = result[2];
             hideLoading();
 
         }
