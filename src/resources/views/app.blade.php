@@ -62,6 +62,7 @@
 	<!-- Scripts -->
 	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="{{ asset('js/dashboard.js?ver=6') }}"></script>
+	<script type="text/javascript" src="{{ asset('js/dashboard.js?ver=7') }}"></script>
+	<script type="text/javascript" src="{{ asset('js/redis_dashboard.js?ver=1') }}"></script>
 </body>
 </html>

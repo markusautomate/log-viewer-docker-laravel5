@@ -23,6 +23,9 @@ Route::get('invokelist', 'DashboardController@invoke_list');
 Route::get('loglist', 'DashboardController@log_list');
 Route::get('logdelete', 'DashboardController@log_delete');
 
+// Redis
+Route::post('redis/filter', 'RedisController@filters');
+Route::get('redis/log-date/{date}', 'RedisController@logdate');
 Route::get('redis', 'RedisController@index');
 
 Route::controllers([
