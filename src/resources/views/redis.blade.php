@@ -90,6 +90,11 @@
 {{--						@endforeach--}}
 {{--						{!! $logs->render() !!}--}}
 					</div>
+					<nav>
+						<ul class="pagination" id="pagination">
+							<!-- pagination buttons go here -->
+						</ul>
+					</nav>
 				</div>
 			</div>
 		</div>
