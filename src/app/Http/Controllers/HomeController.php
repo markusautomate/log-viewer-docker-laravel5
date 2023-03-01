@@ -36,113 +36,52 @@ class HomeController extends Controller
         $this->middleware('auth');
     }
 
+
     /**
      * Show the application dashboard to the user.
      *
-     * @return \Illuminate\View\View
+     * @return Response
      */
     public function index()
     {
-        $log_date = date('Y-m-d', time());
+        $log_date = date('Y-m-d',time());
 
-        $keys = Redis::keys('*'.$log_date.'*');
-        $apps = [];
-        $events = [];
+        $appnames = RecentApp::where('user_id', Auth::user()->id)
+                             ->orderBy('created_at','desc')
+                             ->take(5)
+                             ->get();
 
-        foreach ($keys as $key)
-        {
-            $split = explode( ':',$key);
 
-            if (array_search($split[2], $apps)===false)
-            {
-                array_push($apps, $split[2]);
-            }
+        $logs = "";
 
-            if (array_search($split[3], $events)===false)
-            {
-                array_push($events, $split[3]);
-            }
+
+        $timestart = mktime(0,0,0,date("m",time()),date("d",time()),date("Y",time()));
+        $timeend = strtotime("+1 hour", $timestart);
+        $graphData = [];
+        $graphLabel = [];
+        for ($x = 0; $x <= 23; $x++) {
+
+            $graphData[$x] =  Invocation::whereBetween('timestamp', [
+                $timestart,
+                $timeend
+            ])->count();
+
+            $graphLabel[$x] = date("H:i", $timestart);
+
+            $timestart = $timeend;
+            $timeend = strtotime("+1 hour", $timestart);
         }
 
+
         return view('home2')
-            ->with('keys', $keys)
-            ->with('apps', $apps)
-            ->with('events', $events);
+            ->with('log_date',$log_date)
+            ->with('logs',$logs)
+            ->with('appnames',$appnames)
+            ->with('graphData',$graphData)
+            ->with('graphLabel',$graphLabel);
     }
 
     public function logdate($log_date)
-    {
-        $keys = Redis::keys('*'.$log_date.'*');
-        $apps = [];
-        $events = [];
-
-        foreach ($keys as $key)
-        {
-            $split = explode( ':',$key);
-
-            if (array_search($split[2], $apps)===false)
-            {
-                array_push($apps, $split[2]);
-            }
-
-            if (array_search($split[3], $events)===false)
-            {
-                array_push($events, $split[3]);
-            }
-        }
-
-        return view('home2')
-            ->with('keys', $keys)
-            ->with('apps', $apps)
-            ->with('events', $events);
-    }
-
-
-//    /**
-//     * Show the application dashboard to the user.
-//     *
-//     * @return Response
-//     */
-//    public function index()
-//    {
-//        $log_date = date('Y-m-d',time());
-//
-//        $appnames = RecentApp::where('user_id', Auth::user()->id)
-//                             ->orderBy('created_at','desc')
-//                             ->take(5)
-//                             ->get();
-//
-//
-//        $logs = "";
-//
-//
-//        $timestart = mktime(0,0,0,date("m",time()),date("d",time()),date("Y",time()));
-//        $timeend = strtotime("+1 hour", $timestart);
-//        $graphData = [];
-//        $graphLabel = [];
-//        for ($x = 0; $x <= 23; $x++) {
-//
-//            $graphData[$x] =  Invocation::whereBetween('timestamp', [
-//                $timestart,
-//                $timeend
-//            ])->count();
-//
-//            $graphLabel[$x] = date("H:i", $timestart);
-//
-//            $timestart = $timeend;
-//            $timeend = strtotime("+1 hour", $timestart);
-//        }
-//
-//
-//        return view('home2')
-//            ->with('log_date',$log_date)
-//            ->with('logs',$logs)
-//            ->with('appnames',$appnames)
-//            ->with('graphData',$graphData)
-//            ->with('graphLabel',$graphLabel);
-//    }
-
-    public function logdate_old($log_date)
     {
         $myDate              = Carbon::createFromFormat('Y-m-d', $log_date);
         $startOfDayTimestamp = $myDate->startOfDay()->timestamp;
@@ -181,68 +120,7 @@ class HomeController extends Controller
     }
 
 
-    public function filters(Request $request)
-    {
-
-        $log_date = $request->date_log;
-        $appId    = $request->appid;
-        $event = $request->event;
-        $logLevel = $request->level;
-        $search   = $request->search;
-
-//        $redis = (new PredisAdapter())->connect('redis_laravel', 6379);
-//
-//        $logIndx = new Index($redis);
-//
-////        $logIndx->addTextField('message')
-////                ->addTextField('user')
-////                ->addNumericField('level')
-////                ->setIndexName('logs')
-////                ->create();
-//
-//        $result = $logIndx->search('alice');
-//
-//        return $result;
-//
-//
-        $logs = Redis::lrange('log:'.$log_date.':'.$appId.':'.$event, 0,-1);
-        $data = "";
-        foreach ($logs as $log) {
-            $obj = json_decode($log);
-
-            $data = $data."<div class='mb-2'>
-                     <div class='flex'>
-                         <div class='font-semibold w-1/4 px-2 pt-1 rounded log-".strtolower($obj->level_name)."'><p class='text-sm'><i class='fa fa-exclamation-triangle'></i>".$obj->level_name."</p></div>
-                         <div class='w-3/4 px-2'>
-                             <p style='white-space: pre-wrap'>".$obj->message."</p>
-                         </div>
-                     </div
-                     <p class='text-xs'>".date('Y/m/d h:i:s a', strtotime($obj->datetime))." - ".config('app.timezone')."</p>
-                     <hr>
-                 </div>";
-
-//            $data = $data."<div class='mb-2'>
-//                     <p><button  class='btn btn-xs btn-primary'  onclick='invoke(this.id)' id='".$log->invoke_id."'>[".sprintf('%05d', $log->invoke_id)."]</button><strong>".$log->event." - ".$log->appName." - ".$log->userName.($log->sid1 != "0" ? " - <button  class='btn btn-xs btn-warning'  onclick='sids(this.id)' id='".$log->sid1."'>".$log->sid1."</button>" : "").($log->sid2 != "0" ? " - <button  class='btn btn-xs btn-success'  onclick='sids(this.id)' id='".$log->sid2."'>".$log->sid2."</button>" : "")."</strong></p>
-//                     <div class='flex'>
-//                         <div class='font-semibold w-1/4 px-2 pt-1 rounded log-".strtolower(\Monolog\Logger::getLevelName($log->level))."'><p class='text-sm'><i class='fa fa-exclamation-triangle'></i>".\Monolog\Logger::getLevelName($log->level)."</p></div>
-//                         <div class='w-3/4 px-2'>
-//                             <p style='white-space: pre-wrap'>".$log->message."</p>
-//                         </div>
-//                     </div
-//                     <p class='text-xs'>".date('Y/m/d h:i:s a', $log->time)." - ".config('app.timezone')."</p>
-//                     <hr>
-//                 </div>";
-        }
-
-
-        $result = [$data];
-
-        return response()->json($result);
-
-
-    }
-
-        public function filters_old(Request $request)
+        public function filters(Request $request)
     {
 
         $log_date = $request->date_log;

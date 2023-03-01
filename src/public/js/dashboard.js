@@ -5,6 +5,7 @@ function  changeDate()
     var url = '/log-date/'+dateNow;
      window.location = url;
 }
+
 function updateAppIDfilter(id)
 {
     if(document.getElementById('dateCal').value=='')
@@ -15,7 +16,7 @@ function updateAppIDfilter(id)
 
     document.getElementById('searchAppID').value='';
     console.debug("search for " + id);
-    var activeEventFilter = document.getElementById("activeEventFilter");
+    var activeUserFilter = document.getElementById("activeUserFilter");
     var activeAppIdFilter = document.getElementById("activeAppIdFilter");
     var button = document.getElementById(id);
     var elems = document.getElementById("appname_filter").querySelectorAll("button");
@@ -45,9 +46,9 @@ function updateAppIDfilter(id)
         activeAppIdFilter.style.display = "none";
         activeAppIdFilter.value = 0;
         document.getElementById('searchAppID').value = '';
-        activeEventFilter.innerText = '';
-        activeEventFilter.value = 0;
-        activeEventFilter.style.display = "none";
+        activeUserFilter.innerText = '';
+        activeUserFilter.value = 0;
+        activeUserFilter.style.display = "none";
     }
     else if((button!=null) && (button.innerText=== activeAppIdFilter.innerText))
     {
@@ -57,21 +58,22 @@ function updateAppIDfilter(id)
         activeAppIdFilter.style.display = "none";
         activeAppIdFilter.value = 0;
         document.getElementById('searchAppID').value = '';
-        activeEventFilter.innerText = '';
-        activeEventFilter.value = 0;
-        activeEventFilter.style.display = "none";
+        activeUserFilter.innerText = '';
+        activeUserFilter.value = 0;
+        activeUserFilter.style.display = "none";
     }
     else
     {
         activeAppIdFilter.innerText = id;
         activeAppIdFilter.value = id;
-        activeEventFilter.innerText = '';
-        activeEventFilter.value = 0;
-        activeEventFilter.style.display = "none";
+        activeUserFilter.innerText = '';
+        activeUserFilter.value = 0;
+        activeUserFilter.style.display = "none";
         activeAppIdFilter.style.display = "block";
     }
 
 }
+
 
 function updateUserfilter(id)
 {
@@ -80,7 +82,7 @@ function updateUserfilter(id)
         alert("First, please choose the date. Thank you!");
         return;
     }
-    var activeEventFilter = document.getElementById("activeEventFilter");
+    var activeUserFilter = document.getElementById("activeUserFilter");
     var button = document.getElementById(id);
     var elems = document.getElementById("username_filter").querySelectorAll("button");
     [].forEach.call(elems, function(el) {
@@ -92,22 +94,23 @@ function updateUserfilter(id)
     button.classList.add("btn-secondary");
     button.classList.remove("btn-primary");
 
-    if (button.innerText=== activeEventFilter.innerText)
+    if (button.innerText=== activeUserFilter.innerText)
     {
         button.classList.remove("btn-secondary");
         button.classList.add("btn-primary");
-        activeEventFilter.innerText = '';
-        activeEventFilter.value = 0;
-        activeEventFilter.style.display = "none";
+        activeUserFilter.innerText = '';
+        activeUserFilter.value = 0;
+        activeUserFilter.style.display = "none";
     }
     else
     {
-        activeEventFilter.innerText = button.innerText;
-        activeEventFilter.value = button.innerText;
-        activeEventFilter.style.display = "block";
+        activeUserFilter.innerText = button.innerText;
+        activeUserFilter.value = button.innerText;
+        activeUserFilter.style.display = "block";
     }
 
 }
+
 
 function updateLevelfilter(id)
 {
@@ -165,15 +168,13 @@ function updateLevelfilter(id)
 }
 
 
-
-
 function filter(){
     showLoading();
     var date_log = document.getElementById('dateCal').value;
     var appid = document.getElementById("activeAppIdFilter").value;
     console.debug("appid is " + appid);
-    var event = document.getElementById("activeEventFilter").value;
-    console.debug("user is " + event);
+    var user = document.getElementById("activeUserFilter").value;
+    console.debug("user is " + user);
     var level =[];
     console.debug("level is " + level);
     var search = document.getElementById('searchText').value.trim();
@@ -191,7 +192,7 @@ function filter(){
 
     var data = {"date_log":date_log,
         "appid":appid,
-        "event":event,
+        "user":user,
         "level":JSON.stringify(level),
         "search":search,
         "load":0}
@@ -205,14 +206,15 @@ function filter(){
         },
         dataType : 'json',
         success : function (result) {
-            document.getElementById("log_area").innerHTML = result[0];
-            // document.getElementById('username_filter').innerHTML = result[0];
-            // document.getElementById('appname_filter').innerHTML = result[2];
+            document.getElementById("log_area").innerHTML = result[1];
+            document.getElementById('username_filter').innerHTML = result[0];
+            document.getElementById('appname_filter').innerHTML = result[2];
             hideLoading();
 
         }
     });
 }
+
 
 function loadMore(id){
     var myobj = document.getElementById(id);
