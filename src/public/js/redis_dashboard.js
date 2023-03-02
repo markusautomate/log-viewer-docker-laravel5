@@ -193,6 +193,8 @@ function redis_filter(){
         return;
     }
 
+    resetFilters();
+
     showLoading();
     var date_log = document.getElementById('dateCal').value;
     var appid = document.getElementById("activeAppIdFilter").value;
@@ -201,18 +203,7 @@ function redis_filter(){
 
     var level =[];
 
-    var search = document.getElementById('searchText').value.trim();
-    if (search == "") search="unknown"
-
-    if (appid==undefined) appid=0
-
-    var elems = document.getElementById("level_filter").querySelectorAll("button");
-    [].forEach.call(elems, function(el) {
-        if( el.classList.contains("btn-primary"))
-        {
-            level.push(el.id)
-        }
-    });
+    var search = "unknown";
 
     var data = {"date_log":date_log,
         "appid":appid,
@@ -251,6 +242,32 @@ function redis_filter(){
 
         }
     });
+}
+
+
+function resetFilters() {
+    //removing active level filter
+    var elems = document.getElementById("level_filter").querySelectorAll("button");
+    [].forEach.call(elems, function(el) {
+        el.classList.remove("btn-primary");
+        el.classList.remove("btn-secondary");
+        el.classList.add("btn-primary");
+    });
+    level_filter = [];
+
+    //remove users filter
+    var users_filter = document.getElementById("users_filter");
+    users_filter.innerHTML = '';
+    users = [];
+    userFilter = '';
+    document.getElementById('activeUserFilter').value = '';
+    document.getElementById('activeUserFilter').style.display = "none";
+
+
+    // remove search string in the search input
+    var search = document.getElementById('searchText');
+    search.value = '';
+    searchFilter = '';
 }
 
 
