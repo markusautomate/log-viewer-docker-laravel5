@@ -1,7 +1,8 @@
-
+users = [];
 logs = [];
 filtered_logs = [];
 level_filter = [];
+userFilter = '';
 var currentPage = 1;
 var rowsPerPage = 30;
 
@@ -119,6 +120,58 @@ function updateRedisEventfilter(id)
 
 }
 
+
+function updateRedisUserfilter(id)
+{
+    if(document.getElementById('dateCal').value=='')
+    {
+        alert("First, please choose the date. Thank you!");
+        return;
+    }
+    var activeUserFilterbtn = document.getElementById("activeUserFilter");
+    var button = document.getElementById(id);
+    var elems = document.getElementById("users_filter").querySelectorAll("button");
+    [].forEach.call(elems, function(el) {
+        el.classList.remove("btn-primary");
+        el.classList.remove("btn-secondary");
+        el.classList.add("btn-primary");
+    });
+
+    button.classList.add("btn-secondary");
+    button.classList.remove("btn-primary");
+
+    if (button.innerText=== activeUserFilterbtn.innerText)
+    {
+        button.classList.remove("btn-secondary");
+        button.classList.add("btn-primary");
+        activeUserFilterbtn.innerText = '';
+        activeUserFilterbtn.value = 0;
+        activeUserFilterbtn.style.display = "none";
+        userFilter = '';
+    }
+    else
+    {
+        activeUserFilterbtn.innerText = button.innerText;
+        activeUserFilterbtn.value = button.innerText;
+        activeUserFilterbtn.style.display = "block";
+        userFilter = id;
+    }
+
+    filter_logs();
+}
+
+
+function addUsers(users)
+{
+    var users_filter = document.getElementById('users_filter');
+    var userHtml = '';
+    users.forEach((user)=>{
+        userHtml+= "<button id='"+user+"'  onclick=\"updateRedisUserfilter(this.id)\" class=\"btn btn-primary\" style=\"width: 100%\">"+user+"</button>"
+    })
+
+    users_filter.innerHTML = userHtml;
+}
+
 function redis_filter(){
     showLoading();
     var date_log = document.getElementById('dateCal').value;
@@ -159,8 +212,16 @@ function redis_filter(){
         success : function (result) {
             logs = [];
             for (var i in result) {
-                logs.push(JSON.parse(result[i]))
+                log = JSON.parse(result[i])
+                logs.push(log)
+
+                if (!users.includes(log.context.user)) {
+                    users.push(log.context.user)
+                }
+
             }
+            addUsers(users);
+            console.debug('users:', users)
 
             filter_logs();
             // document.getElementById("log_area").innerHTML = result[4];
@@ -213,68 +274,19 @@ function updateRedisLevelfilter(id)
     filter_logs();
 }
 
-function updateRedisLevelfilter_old(id)
-{
-    if(document.getElementById('dateCal').value=='')
-    {
-        alert("First, please choose the date. Thank you!");
-        return;
-    }
-
-    var activeLevelFilter = document.getElementById("activeLevelFilter");
-    var button = document.getElementById(id);
-
-
-    if (id==='lvlReset')
-    {
-        var elems = document.getElementById("level_filter").querySelectorAll("button");
-        [].forEach.call(elems, function(el) {
-            el.classList.remove("btn-primary");
-            el.classList.remove("btn-secondary");
-            el.classList.add("btn-primary");
-        });
-    }
-    else if((button!=null) && button.classList.contains("btn-secondary"))
-    {
-        button.classList.remove("btn-secondary");
-        button.classList.add("btn-primary");
-    }
-    else if((button!=null) && button.classList.contains("btn-primary"))
-    {
-        button.classList.add("btn-secondary");
-        button.classList.remove("btn-primary");
-    }else
-    {
-        activeLevelFilter.innerText = button.innerText;
-        activeLevelFilter.value = button.id;
-        activeLevelFilter.style.display = "block";
-    }
-
-    if (document.getElementById("sids_filter"))
-    {
-        console.debug("filters sids :" + document.getElementById("sids_filter").innerText)
-        sids(document.getElementById("sids_filter").innerText);
-    }
-    else if(document.getElementById("invoke_id_filter"))
-    {
-        console.debug("filters invoke ID : "+ document.getElementById("invoke_id_filter").value)
-        invoke(document.getElementById("invoke_id_filter").innerText);
-    }
-    else
-    {
-        console.debug("filters regular")
-        redis_filter();
-    }
-
-}
 
 function filter_logs()
 {
-    if (level_filter.length) {
-        filtered_logs =  logs.filter( x => level_filter.includes(x.level));
-    } else {
-        filtered_logs = logs;
+    filtered_logs = logs;
+    console.debug('before user filter:', filtered_logs);
+    if (userFilter !=='') {
+        filtered_logs =  filtered_logs.filter( x => x.context.user === userFilter);
     }
+    console.debug('before level filter:', filtered_logs);
+    if (level_filter.length) {
+        filtered_logs =  filtered_logs.filter( x => level_filter.includes(x.level));
+    }
+    console.debug('final logs:', filtered_logs);
     setCurrentPage(1)
 }
 

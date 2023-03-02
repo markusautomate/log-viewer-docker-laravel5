@@ -12,7 +12,7 @@
 						<input class="col-lg-3" onchange="redis_changeDate()" id="dateCal" type="date">
 						<p class="col-lg-3 filters" style="display: none;" value="0" id="activeAppIdFilter"></p>
 						<p class="col-lg-3 filters" style="display: none;"  value="0" id="activeEventFilter"></p>
-						<p class="col-lg-3 filters" style="display: none;"  value="0" id="activeLevelFilter"></p>
+						<p class="col-lg-3 filters" style="display: none;"  value="0" id="activeUserFilter"></p>
 					</div>
 				</div>
 			</div>
@@ -55,6 +55,10 @@
 							@foreach($events as $event)
 								<button id="{{$event}}"  onclick="updateRedisEventfilter(this.id)" class="btn btn-primary" style="width: 100%">{{$event}} </button>
 							@endforeach
+						</div>
+						<hr>
+						<button class="accordion">Users</button>
+						<div id="users_filter" class="panel">
 						</div>
 						<hr>
 						<form action="/filters" method="POST">
