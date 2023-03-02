@@ -75,7 +75,7 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">Logs</div>
 				<div class="panel-body">
-					<div class="text-right"><input onchange="redis_filter()" type="text"  id="searchText"></div>
+					<div class="text-right"><input onchange="updateSearchFilter()" type="text"  id="searchText"></div>
 					<div class="log_area" id="log_area">
 {{--						@foreach($logs as $log)--}}
 {{--							<div class="mb-2">--}}

@@ -3,6 +3,7 @@ logs = [];
 filtered_logs = [];
 level_filter = [];
 userFilter = '';
+searchFilter = '';
 var currentPage = 1;
 var rowsPerPage = 30;
 
@@ -128,6 +129,7 @@ function updateRedisUserfilter(id)
         alert("First, please choose the date. Thank you!");
         return;
     }
+
     var activeUserFilterbtn = document.getElementById("activeUserFilter");
     var button = document.getElementById(id);
     var elems = document.getElementById("users_filter").querySelectorAll("button");
@@ -172,15 +174,33 @@ function addUsers(users)
     users_filter.innerHTML = userHtml;
 }
 
+
+function updateSearchFilter(){
+    searchFilter = document.getElementById('searchText').value;
+    filter_logs();
+}
+
 function redis_filter(){
+    if(document.getElementById('activeAppIdFilter').style.display === "none")
+    {
+        alert("First, please choose an AppId filter. Thank you!");
+        return;
+    }
+
+    if(document.getElementById('activeEventFilter').style.display === "none")
+    {
+        alert("First, please choose an Event filter. Thank you!");
+        return;
+    }
+
     showLoading();
     var date_log = document.getElementById('dateCal').value;
     var appid = document.getElementById("activeAppIdFilter").value;
-    console.debug("appid is " + appid);
+
     var event = document.getElementById("activeEventFilter").value;
-    console.debug("user is " + event);
+
     var level =[];
-    console.debug("level is " + level);
+
     var search = document.getElementById('searchText').value.trim();
     if (search == "") search="unknown"
 
@@ -278,15 +298,19 @@ function updateRedisLevelfilter(id)
 function filter_logs()
 {
     filtered_logs = logs;
-    console.debug('before user filter:', filtered_logs);
+    // filtering by user
     if (userFilter !=='') {
         filtered_logs =  filtered_logs.filter( x => x.context.user === userFilter);
     }
-    console.debug('before level filter:', filtered_logs);
+    // filtering by loglevel
     if (level_filter.length) {
         filtered_logs =  filtered_logs.filter( x => level_filter.includes(x.level));
     }
-    console.debug('final logs:', filtered_logs);
+    // filter by search
+    if (searchFilter!=='') {
+        filtered_logs =  filtered_logs.filter( x => x.message.includes(searchFilter));
+    }
+
     setCurrentPage(1)
 }
 
