@@ -364,6 +364,12 @@ function displayPagination() {
         return;
     }
 
+    if (totalPages ===1)
+    {
+        pagination.innerHTML = paginationHtml;
+        return;
+    }
+
     if (currentPage === totalPages)
     {
         paginationHtml += "<li class=\"page-item\">\n" +
