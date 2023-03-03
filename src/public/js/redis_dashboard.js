@@ -4,6 +4,7 @@ filtered_logs = [];
 level_filter = [];
 userFilter = '';
 searchFilter = '';
+sidsFilter = '';
 var currentPage = 1;
 var rowsPerPage = 30;
 
@@ -319,16 +320,32 @@ function filter_logs()
     if (userFilter !=='') {
         filtered_logs =  filtered_logs.filter( x => x.context.user === userFilter);
     }
-    // filtering by loglevel
-    if (level_filter.length) {
-        filtered_logs =  filtered_logs.filter( x => level_filter.includes(x.level));
+
+    // filter by sids
+    if (sidsFilter!=='') {
+        filtered_logs =  filtered_logs.filter( x => x.context.sid1===(sidsFilter) || x.context.sid2===(sidsFilter));
     }
+
     // filter by search
     if (searchFilter!=='') {
         filtered_logs =  filtered_logs.filter( x => x.message.includes(searchFilter));
     }
 
+    // filtering by loglevel
+    if (level_filter.length) {
+        filtered_logs =  filtered_logs.filter( x => level_filter.includes(x.level));
+    }
     setCurrentPage(1)
+}
+
+function updateSidFilter(id) {
+    if (sidsFilter !== id) {
+        sidsFilter = id;
+    } else {
+        sidsFilter = '';
+    }
+
+    filter_logs();
 }
 
 function displayTableData() {
@@ -341,8 +358,10 @@ function displayTableData() {
         dataHtml +=
             "<div class='mb-2'>"+
             "<div class='flex'>"+
-            "<div class='font-semibold w-1/4 px-2 pt-1'><p class='text-sm rounded log-"+(filtered_logs[i].level_name).toLowerCase()+"'><i class='fa fa-exclamation-triangle'></i>"+filtered_logs[i].level_name+"</p>"+
-            "<p>User: "+filtered_logs[i].context['user'] +"</p></div>"+
+            "<div class='font-semibold w-1/4 px-2 pt-1'><p class='text-sm rounded log-"+(filtered_logs[i].level_name).toLowerCase()+"'><i class='fa fa-exclamation-triangle'></i>"+filtered_logs[i].level_name+"</p></div>"+
+            "<span>User: "+filtered_logs[i].context['user'] +"</span>"+
+            "<div class='text-right'><button class='btn btn-xs btn-warning my-2' onclick='updateSidFilter(this.id)' id='"+filtered_logs[i].context['sid1'] +"'>"+filtered_logs[i].context['sid1'] +"</button>"+
+            "<button class='btn btn-xs btn-success my-2' onclick='updateSidFilter(this.id)' id='"+filtered_logs[i].context['sid2'] +"'>"+filtered_logs[i].context['sid2'] +"</button></div>"+
             "<div class='w-3/4 px-2'>"+
             "<p style='white-space: pre-wrap'>"+filtered_logs[i].message+"</p>"+
         "</div>"+
