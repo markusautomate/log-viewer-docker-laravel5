@@ -19,7 +19,7 @@ function  redis_changeDate()
 
 function updateRedisAppIDfilter(id)
 {
-    if(document.getElementById('dateCal').value=='')
+    if(document.getElementById('dateCal').value==='')
     {
         alert("First, please choose the date. Thank you!");
         return;
@@ -88,7 +88,7 @@ function updateRedisAppIDfilter(id)
 
 function updateRedisEventfilter(id)
 {
-    if(document.getElementById('dateCal').value=='')
+    if(document.getElementById('dateCal').value==='')
     {
         alert("First, please choose the date. Thank you!");
         return;
@@ -125,7 +125,7 @@ function updateRedisEventfilter(id)
 
 function updateRedisUserfilter(id)
 {
-    if(document.getElementById('dateCal').value=='')
+    if(document.getElementById('dateCal').value==='')
     {
         alert("First, please choose the date. Thank you!");
         return;
@@ -169,7 +169,7 @@ function addUsers(users)
     var users_filter = document.getElementById('users_filter');
     var userHtml = '';
     users.forEach((user)=>{
-        userHtml+= "<button id='"+user+"'  onclick=\"updateRedisUserfilter(this.id)\" class=\"btn btn-primary\" style=\"width: 100%\">"+user+"</button>"
+        if (user!=='') userHtml+= "<button id='"+user+"'  onclick=\"updateRedisUserfilter(this.id)\" class=\"btn btn-primary\" style=\"width: 100%\">"+user+"</button>"
     })
 
     users_filter.innerHTML = userHtml;
@@ -306,7 +306,7 @@ function updateRedisLevelfilter(id)
             button.classList.remove("btn-secondary");
             button.classList.add("btn-primary");
         }
-        level_filter = level_filter.filter(x=>x!=Number(id));
+        level_filter = level_filter.filter(x=>x!==Number(id));
     }
 
     filter_logs();
@@ -358,12 +358,19 @@ function displayTableData() {
         dataHtml +=
             "<div class='mb-2'>"+
             "<div class='flex'>"+
-            "<div class='font-semibold w-1/4 px-2 pt-1'><p class='text-sm rounded log-"+(filtered_logs[i].level_name).toLowerCase()+"'><i class='fa fa-exclamation-triangle'></i>"+filtered_logs[i].level_name+"</p></div>"+
-            "<span>User: "+filtered_logs[i].context['user'] +"</span>"+
-            "<div class='text-right'><button class='btn btn-xs btn-warning my-2' onclick='updateSidFilter(this.id)' id='"+filtered_logs[i].context['sid1'] +"'>"+filtered_logs[i].context['sid1'] +"</button>"+
-            "<button class='btn btn-xs btn-success my-2' onclick='updateSidFilter(this.id)' id='"+filtered_logs[i].context['sid2'] +"'>"+filtered_logs[i].context['sid2'] +"</button></div>"+
-            "<div class='w-3/4 px-2'>"+
-            "<p style='white-space: pre-wrap'>"+filtered_logs[i].message+"</p>"+
+            "<div class='font-semibold w-1/4 px-2 pt-1'><p class='text-sm rounded log-"+(filtered_logs[i].level_name).toLowerCase()+"'><i class='fa fa-exclamation-triangle'></i>"+filtered_logs[i].level_name+"</p></div>";
+
+        if (filtered_logs[i].context['user']!=='') dataHtml +=
+            "<span>User: <strong>"+filtered_logs[i].context['user'] +"</strong></span>";
+
+        if (filtered_logs[i].context['sid1']!=='') dataHtml +=
+            "<div>Sid 1:<button class='btn btn-xs btn-warning my-2' onclick='updateSidFilter(this.id)' id='"+filtered_logs[i].context['sid1'] +"'>"+filtered_logs[i].context['sid1'] +"</button></div>";
+
+        if (filtered_logs[i].context['sid2']!=='') dataHtml +=
+            "<div>Sid 2:<button class='btn btn-xs btn-success my-2' onclick='updateSidFilter(this.id)' id='"+filtered_logs[i].context['sid2'] +"'>"+filtered_logs[i].context['sid2'] +"</button></div>";
+
+        dataHtml +=      "<br><div class='w-3/4 px-2'>"+
+            "<strong>Log Message:</strong><p style='white-space: pre-wrap'>"+filtered_logs[i].message+"</p>"+
         "</div>"+
     "</div>"+
     "<p class='text-xs'>"+filtered_logs[i].datetime+"</p>"+
